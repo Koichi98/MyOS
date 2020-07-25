@@ -1,0 +1,5 @@
+05201002 今井航一
+
+measure_lapic_freq_khz関数ではpm_timer_wait_milisec関数を用いて100ミリ秒を計測し,この間に何回のインクリメントがあったかを計算することでkHzを求めた。
+オーバーヘッド分を削除するため、一度msec=0でpm_timer_wait_milisec(0)を行ってその間にlapic_timerがインクリメントした回数を計測してその分を引くこととした。
+計測した結果、999920kHzを得た。
