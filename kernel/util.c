@@ -19,6 +19,7 @@ void init_frame_buffer(struct FrameBuffer *fb){
   }
 }
 
+
 void putc(char c){
     //case c = '\n'
     if(c==10){
@@ -90,4 +91,16 @@ void puth(unsigned long long value,unsigned char digits_len){
         }
     }
 
+}
+
+
+void print(){
+    puts("ok\n");
+}
+
+void (*reserved_callback2)();
+
+void func(){
+reserved_callback2 = print;
+reserved_callback2();
 }
