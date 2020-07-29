@@ -5,16 +5,20 @@
 extern unsigned char font[128][FONT_HEIGHT];
 
 struct FrameBuffer *FB;
-unsigned int fb_y;
-unsigned fb_x;
+unsigned int fb_y = 0;
+unsigned int fb_x = 0;
 
 void init_frame_buffer(struct FrameBuffer *fb){
+    FB = fb;
+    fb_x = 0;
+    fb_y = 0;
   for (unsigned int i = 0; i < fb->height; i++) {
     for (unsigned int j = 0; j < fb->width; j++) {
       struct Pixel *pixel = fb->base + fb->width * i + j;
       pixel->r = 0;
       pixel->g = 0;
       pixel->b = 0;
+      pixel->_reserved = 1;
     }
   }
 }
@@ -98,9 +102,3 @@ void print(){
     puts("ok\n");
 }
 
-void (*reserved_callback2)();
-
-void func(){
-reserved_callback2 = print;
-reserved_callback2();
-}

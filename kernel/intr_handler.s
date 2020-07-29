@@ -16,6 +16,7 @@ lapic_intr_handler:
     push %r13
     push %r14
     push %r15
+    mov %rsp, %rdi
     call lapic_intr_handler_internal
     pop %r15
     pop %r14
@@ -32,5 +33,4 @@ lapic_intr_handler:
     pop %rdx
     pop %rcx
     pop %rax
-
-iretq
+    iretq

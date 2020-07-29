@@ -1,4 +1,6 @@
-int strcmp(char* str1, char* str2);
+#pragma once
+
+//int strcmp(char* str1, char* str2);
 
 void init_acpi_pm_timer(struct RSDP *rsdp);
 

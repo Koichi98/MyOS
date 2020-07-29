@@ -27,9 +27,15 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
   freq  = measure_lapic_freq_khz();
 
   //8-A
-  unsigned long long handler;
-  asm volatile("lea print(%%rip), %[handler]":[handler]"=r"(handler));
-  lapic_periodic_exec(1000, (void*)handler); //print "ok" per one second
+  //unsigned long long handler;
+  //asm volatile("lea print(%%rip), %[handler]":[handler]"=r"(handler));
+  //lapic_periodic_exec(1000, (void*)handler); //print "ok" per one second
+
+   // 8-B
+  void *handler;
+  asm volatile ("lea schedule(%%rip),%[handler]" : [handler]"=r"(handler));
+  lapic_periodic_exec(1000, handler);
+  init_tasks();
 
   // Do not delete it!
   while (1);
