@@ -4,6 +4,7 @@
 #include "lapic_timer.h"
 #include "util.h"
 #include "interruption.h"
+#include "syscall.h"
 
 extern struct FrameBuffer *FB;
 extern unsigned int fb_y;
@@ -32,10 +33,32 @@ void start(void *SystemTable __attribute__ ((unused)), struct HardwareInfo *_har
   //lapic_periodic_exec(1000, (void*)handler); //print "ok" per one second
 
    // 8-B
+  //void *handler;
+  //asm volatile ("lea schedule(%%rip),%[handler]" : [handler]"=r"(handler));
+  //lapic_periodic_exec(1000, handler);
+  //init_tasks();
+
+  
+  //9-A
+  init_intr();
+  unsigned long long ret;
+  char *str = "sykwer\r\n";
+  asm volatile (
+  "mov %[id], %%rdi\n"
+  "mov %[str], %%rsi\n"
+  "int $0x80\n"
+  "mov %%rax, %[ret]\n"
+  : [ret]"=r"(ret)
+  : [id]"r"((unsigned long long)SYSCALL_PUTS),
+  [str]"m"((unsigned long long)str)
+  );
+
+  //9-B
   void *handler;
   asm volatile ("lea schedule(%%rip),%[handler]" : [handler]"=r"(handler));
   lapic_periodic_exec(1000, handler);
   init_tasks();
+
 
   // Do not delete it!
   while (1);

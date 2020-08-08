@@ -40,6 +40,8 @@ void init_intr(){
 
     unsigned long long handler;
     asm volatile ("lea lapic_intr_handler(%%rip), %[handler]" : [handler]"=r"(handler));
+    unsigned long long handler2;
+    asm volatile ("lea syscall_handler(%%rip), %[handler2]" : [handler2]"=r"(handler2));
     unsigned short reg16;
     asm volatile ("mov %%cs, %0" : "=r"(reg16)); 
     unsigned short attribute = 0x8e00;
@@ -56,7 +58,8 @@ void init_intr(){
     for(int i=0;i<256;i++){
         IDT[i] = empty;
     }
-
+    
     register_intr_handler(32,handler,reg16,attribute);
+    register_intr_handler(128,handler2,reg16,attribute);
     asm volatile("sti");
 }

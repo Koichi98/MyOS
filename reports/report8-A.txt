@@ -1,0 +1,21 @@
+05201002    今井航一
+
+interruption.c
+load_Idt_to_Idtr関数ではIDTのアドレスをCPUに教えるため、data配列に一度格納し、lidt命令を用いてIDTRにロードする。
+
+register_intr_handler関数では割り込みハンドラをIDTに登録する。
+
+init_intr関数ではload_Idt_to_Idtr関数,register_intr_handler関数を用いて割り込み処理を初期化する。具体的にはIDTの全要素を一度0クリアし、今回用いるlapic_intr_handler関数を割り込み処理として登録する。
+
+
+intr_handler.s
+lapic_intr_handler関数を定義し、汎用レジスタをスタックに対比しlapic_intr_handler_internal関数を呼び出し、その後に先程の処理に復帰するため汎用レジスタの値を復帰させる。
+
+lapic_timer.c 
+lapic_periodic_exec関数では前回課題で計測したlocal APICのタイマーの周波数を用いて要求した時間ごとに割り込みを行うものとした。
+
+lapic_intr_handler_internal関数では割り込み処理本体を呼び出すものとした。ここでは"ok"と出力させるものとした。
+
+
+
+kernel.cにおいて、割り込み処理本体となる"ok"と出力させるprint関数をlapic_periodic_exec関数の引数として渡す際にlea命令を用いることに気づかず、苦労した。

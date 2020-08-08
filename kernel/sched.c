@@ -5,36 +5,36 @@
 #include "sched.h"
 #include "hardware.h"
 
-#define STACK_SIZE 1024
+//#define STACK_SIZE 1024
 #define TASK_NUM 3
 
-char stack1 [STACK_SIZE];
-char stack2 [STACK_SIZE];
-char stack3 [STACK_SIZE];
+//char stack1 [STACK_SIZE];
+//char stack2 [STACK_SIZE];
+//char stack3 [STACK_SIZE];
 
-static void task1(){
-    while (1) {
-        puts("hello from task1\r\n");
-        volatile int i = 100000000;
-        while (i--);
-    }
-}
+//static void task1(){
+    //while (1) {
+        //puts("hello from task1\r\n");
+        //volatile int i = 100000000;
+        //while (i--);
+    //}
+//}
 
-static void task2(){
-    while (1) {
-        puts("hello from task2\r\n");
-        volatile int i = 100000000;
-        while (i--);
-    }
-}
+//static void task2(){
+    //while (1) {
+        //puts("hello from task2\r\n");
+        //volatile int i = 100000000;
+        //while (i--);
+    //}
+//}
 
-static void task3(){
-    while (1) {
-        puts("hello from task3\r\n");
-        volatile int i = 100000000;
-        while (i--);
-    }
-}
+//static void task3(){
+    //while (1) {
+        //puts("hello from task3\r\n");
+        //volatile int i = 100000000;
+        //while (i--);
+    //}
+//}
 
 struct Task{
     unsigned long long sp;
@@ -46,58 +46,44 @@ unsigned int current_task;
 
 static void init_task(int idx,unsigned char *stack_bottom,unsigned long long rip){
     unsigned long long *sp = stack_bottom;
-    //asm volatile ("mov %0,%%rsp" ::"r"(stack_bottom)); 
-    //puth(stack_bottom,16);
-    //puts("\n");
 
     unsigned long long ss;
     asm volatile("mov %%ss, %0":"=r"(ss));
     *(sp-1) = ss;
-    //asm volatile("push %0"::"r"(ss));
 
-    //unsigned long long rsp;
-   // asm volatile ("mov %%rsp, %0": "=r"(rsp));
     *(sp-2) = stack_bottom;
-    //puth(sp,16);
-    //puts("\n");
-    //asm volatile("push %0"::"r"(sp));
 
     unsigned long long cur_sp = sp - 2;
     unsigned long long rflags;
     asm volatile ("mov %%rsp, %0\n" "mov %1, %%rsp\n" "pushfq\n" : "=r"(rflags) : "m"(cur_sp));
     asm volatile ("mov %0, %%rsp"::"m"(rflags));
-    //sp-=8;
-    //asm volatile ("mov %%rsp, %0": "=r"(sp));
-    //puth(sp,16);
-    //puts("\n");
 
     unsigned long long cs;
     asm volatile("mov %%cs, %0":"=r"(cs));
     *(sp-4) = cs;
-    //asm volatile ("push %0"::"r"(cs));
 
-    //asm volatile ("push %0"::"r"(rip));
     *(sp-5) = rip;
-    //asm volatile("mov %%rsp, %0":"=r"(sp));
-    //sp -= 8 * 15;
-    //tasks[idx].sp = sp - 20;
     tasks[idx].sp =  (unsigned long long)stack_bottom - 8*20;
 }
 
 
 void init_tasks(){
 
-    //unsigned long long sp2;
-    //unsigned long long sp3;
-    //sp2 = stack2 + (STACK_SIZE-1) * 8;
-    //sp3 = stack3 + (STACK_SIZE-1) * 8;
+    unsigned char* stack_bottom2 = 0x106000000;
+    unsigned char* stack_bottom3 = 0x107000000;
+    unsigned long long APP1_START = 0x104000000;
+    unsigned long long APP2_START = 0x105000000;
+    unsigned long long APP3_START = 0x106000000;
 
-    init_task(1,stack2 + STACK_SIZE,task2);
-    init_task(2,stack3 + STACK_SIZE,task3);
+    
+    init_task(1,stack_bottom2,APP2_START);
+    init_task(2,stack_bottom3,APP3_START);
 
-    asm volatile ("mov %0,%%rsp" ::"r"(stack1+STACK_SIZE));
-    current_task = 0;
-    task1();
+    //asm volatile ("mov %0,%%rsp" ::"r"(stack1+STACK_SIZE));
+    //current_task = 0;
+    //task1();
+
+    asm volatile ("jmp *%0" :: "m"(APP1_START));
     
 }
 
